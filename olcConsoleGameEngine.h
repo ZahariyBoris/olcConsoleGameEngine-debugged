@@ -124,12 +124,12 @@ http://www.twitch.tv/javidx9
 #pragma comment(lib, "winmm.lib")
 
 #ifndef UNICODE
-
+		   // Removed #error
 #endif
 
 #include <windows.h>
-#include <cstring>
-#include <cmath>
+#include <cstring> // Added lib
+#include <cmath>   // Added lib	
 #include <iostream>
 #include <chrono>
 #include <vector>
@@ -327,9 +327,9 @@ public:
 		m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		m_hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
 
-		memset(m_keyNewState, 0, 256 * sizeof(short));
-		memset(m_keyOldState, 0, 256 * sizeof(short));
-		memset(m_keys, 0, 256 * sizeof(sKeyState));
+		memset(m_keyNewState, 0, 256 * sizeof(short)); // Removed std::
+		memset(m_keyOldState, 0, 256 * sizeof(short)); // Removed std::
+		memset(m_keys, 0, 256 * sizeof(sKeyState));    // Removed std::
 		m_mousePosX = 0;
 		m_mousePosY = 0;
 
@@ -411,10 +411,10 @@ public:
 			return Error(L"Screen Width / Font Width Too Big");
 
 		// Set Physical Console Window Size
-		int screenWidth = static_cast<short>(m_nScreenWidth);
-		int screenHeight = static_cast<short>(m_nScreenHeight);
+		int screenWidth = static_cast<short>(m_nScreenWidth); // Change here 
+		int screenHeight = static_cast<short>(m_nScreenHeight); // Change here
 
-		m_rectWindow = { 
+		m_rectWindow = { // Reworked this part
    			0, 
     		0, 
     		static_cast<short>(screenWidth - 1), 
@@ -961,7 +961,7 @@ private:
 				// Update Title & Present Screen Buffer
 				wchar_t s[256];
 				swprintf_s(s, 256, L"OneLoneCoder.com - Console Game Engine - %s - FPS: %3.2f", m_sAppName.c_str(), 1.0f / fElapsedTime);
-				SetConsoleTitleW(s);
+				SetConsoleTitleW(s); // Changed from SetConsoleTitle to SetConsoleTitleW
 				WriteConsoleOutput(m_hConsole, m_bufScreen, { (short)m_nScreenWidth, (short)m_nScreenHeight }, { 0,0 }, &m_rectWindow);
 			}
 
@@ -1002,7 +1002,7 @@ protected: // Audio Engine =====================================================
 	{
 	public:
 		olcAudioSample()
-		{
+		{ // Removed an error here
 
 		}
 
@@ -1202,7 +1202,7 @@ protected: // Audio Engine =====================================================
 	// Static wrapper for sound card handler
 	static void CALLBACK waveOutProcWrap(HWAVEOUT hWaveOut, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
-		((olcConsoleGameEngine*)(uintptr_t)dwInstance)->waveOutProc(hWaveOut, uMsg, dwParam1, dwParam2);
+		((olcConsoleGameEngine*)(uintptr_t)dwInstance)->waveOutProc(hWaveOut, uMsg, dwParam1, dwParam2); // Change here
 	}
 
 	// Audio thread. This loop responds to requests from the soundcard to fill 'blocks'
@@ -1368,7 +1368,7 @@ protected:
 	int Error(const wchar_t *msg)
 	{
 		wchar_t buf[256];
-		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL);
+		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL); // Changed from FormatMessage to FormatMessageW
 		SetConsoleActiveScreenBuffer(m_hOriginalConsole);
 		wprintf(L"ERROR: %s\n\t%s\n", msg, buf);
 		return 0;
